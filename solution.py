@@ -6,11 +6,11 @@ class Category:
         self.ledger = []
 
     def __str__(self):
-        title = f'{self.name.center(30, '*')}\n'
-        body = [ f'{entry.description.ljust(23)[:23]}' + f'{f'{entry.amount:.2f}'.rjust(7)[0:7]}\n' \
+        title = f'{self.name.center(30, "*")}\n'
+        body = [ f'{entry.description.ljust(23)[:23]}' + f'{f"{entry.amount:.2f}".rjust(7)[0:7]}\n' \
             for entry in self.ledger ]
 
-        return f'{title}{''.join(body)}Total: {self.total_funds:.2f}'
+        return f'{title}{"".join(body)}Total: {self.total_funds:.2f}'
 
     def deposit(self, amount: float, description=''):
         if amount <= 0:
@@ -84,7 +84,7 @@ def verticalize_chart_percentage_column(column: dict) -> str:
 def create_spend_chart_label_columns(categories: list) -> str:
     n_lines = max([len(category.name) for category in categories])
     n_columns = len(categories)
-    header = f'    {n_columns * '---'}-'
+    header = f'    {n_columns * "---"}-'
     label_columns = f'{header}\n'
     for i in range(n_lines + 1):
         label_columns = label_columns + '    '
