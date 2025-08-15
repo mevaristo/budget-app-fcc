@@ -57,32 +57,41 @@ class LedgerEntry:
     def __str__(self):
         return f'Description: {self.description}, Amount: {self.amount}'
 
-def create_spend_chart(categories):
+def create_spend_chart(categories: Category) -> str:
+    sorted_categories = sorted(categories, key=lambda category: category.expenses, reverse=True)
+
     total_expenses = sum ([ category.expenses for category in categories ])
     relative_percentual_expenses = { category.name : (100 * category.expenses) / total_expenses \
-        for category in sorted(categories, key=lambda category: category.expenses, reverse=True) }
+        for category in sorted_categories }
     spend_chart_column = create_spend_chart_percentage_columns()
     for key in relative_percentual_expenses:
         increment_spend_chart_column(int(relative_percentual_expenses[key]), spend_chart_column)
 
     return f'Percentage spent by category\n' + \
-        str(relative_percentual_expenses) + \
-        f'\n{verticalize_chart_percentage_column(spend_chart_column)}'
+        f'{verticalize_chart_percentage_column(spend_chart_column)}' + \
+        f'{create_spend_chart_label_columns(sorted_categories)}'
 
-def create_spend_chart_percentage_columns():
+def create_spend_chart_percentage_columns() -> dict:
     return { f'{_}': f'{_}|'.rjust(4) for _ in range(100, -1, -10) }
 
 def increment_spend_chart_column(percentage: int, column: dict):
     for i, s in ((str(_), (' o ' if _ < percentage else '   ')) for _ in range(0, 101, 10)):
         column[i] = column[i] + s
 
-def verticalize_chart_percentage_column(column: dict):
+def verticalize_chart_percentage_column(column: dict) -> str:
     return ''.join([ f'{column[key]}\n' for key in column ])
 
-def create_spend_chart_label_columns():
-    pass
-
-        
+def create_spend_chart_label_columns(categories: list) -> str:
+    n_lines = max([len(category.name) for category in categories])
+    n_columns = len(categories)
+    header = f'    {n_columns * '---'}-'
+    label_columns = f'{header}\n'
+    for i in range(n_lines + 1):
+        label_columns = label_columns + '    '
+        for category in categories:
+            label_columns = label_columns + ('   ' if i >= len(category.name) else f' {category.name[i]} ')
+        label_columns = label_columns + '\n'
+    return label_columns.rstrip()
 
 if __name__ == '__main__':
     print('Some tests:')
